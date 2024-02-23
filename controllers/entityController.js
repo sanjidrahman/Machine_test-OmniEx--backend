@@ -48,7 +48,6 @@ const calcSupplier = async (req, res) => {
             inputDate.setDate(inputDate.getDate() + 1)
             const serverDate = inputDate.toISOString()
             format = serverDate.split('T')[0]
-            console.log(serverDate + ' ||| ' + format);
         }
 
         const report = await quoteLedgerModel.aggregate([
