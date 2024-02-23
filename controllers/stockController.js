@@ -1,5 +1,4 @@
 const stockModel = require("../models/stockModel")
-const moment = require('moment');
 
 const getAllStockRecord = async (req, res) => {
     try {
@@ -15,11 +14,16 @@ const addStockRecord = async (req, res) => {
         const { buyer, supplier, date, time, amount } = req.body
         const buyerId = buyer._id
         const supplierId = supplier._id
-        const serverDate = moment(date).format('YYYY-MM-DD')
+        // >>>>>>> Date conversion <<<<<<<<<
+        const inputDate = new Date(date)
+        inputDate.setDate(inputDate.getDate() + 1)
+        const serverDate = inputDate.toISOString()
+        const format = serverDate.split('T')[0]
+        // >>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<
         const newRecord = new stockModel({
             buyerId,
             supplierId,
-            date: serverDate,
+            date: format,
             time,
             amount
         })
