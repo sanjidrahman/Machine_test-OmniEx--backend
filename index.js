@@ -8,8 +8,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 mongoose.connect('mongodb://localhost:27017/OminiEx')
-.then(() => console.log('DB Connected'))
-.catch((err) => console.log('Something went wrong', err))
+    .then(() => console.log('DB Connected'))
+    .catch((err) => console.log('Something went wrong', err))
 
 app.use(cors({
     origin: ['http://localhost:4200']
@@ -17,6 +17,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+app.get('/', (req, res) => {
+    res.send('Hi from Backend')
+})
 
 app.use('/admin', adminRoute)
 
