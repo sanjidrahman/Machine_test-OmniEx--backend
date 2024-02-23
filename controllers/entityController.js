@@ -34,7 +34,6 @@ const deleteEntity = async (req, res) => {
         await entityModel.deleteOne({ _id: e_id })
         res.status(200).json({ message: 'Success' })
     } catch (err) {
-        console.log(err);
         res.status(500).json({ message: 'Internal Server Error' })
     }
 }
@@ -111,7 +110,6 @@ const calcSupplier = async (req, res) => {
         ]);
         return res.status(200).json({ report })
     } catch (err) {
-        console.log(err);
         res.status(500).json({ message: 'Internal Server Error' })
     }
 }

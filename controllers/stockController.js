@@ -6,7 +6,6 @@ const getAllStockRecord = async (req, res) => {
         const stockRecords = await stockModel.find().populate('buyerId').populate('supplierId')
         res.status(200).json({ stockRecords })
     } catch (err) {
-        console.log(err);
         res.status(500).json({ message: 'Internal Server Error'})
     }
 }
@@ -27,7 +26,6 @@ const addStockRecord = async (req, res) => {
         await newRecord.save()
         res.status(201).json({ message: 'Created' })
     } catch (err) {
-        console.log(err);
         res.status(500).json({ message: 'Internal Server Error'})
     }
 }
@@ -39,7 +37,6 @@ const deleteStock = async (req, res) => {
         await stockModel.deleteOne({ _id: q_id })
         res.status(200).json({ message: 'Success' })
     } catch (err) {
-        console.log(err);
         res.status(500).json({ message: 'Internal Server Error' })
     }
 }

@@ -28,7 +28,7 @@ const addQuoteRecord = async (req, res) => {
         await newRecord.save()
         res.status(201).json({ message: 'Created' })
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 
@@ -38,7 +38,6 @@ const deleteQuoteRecord = async (req, res) => {
         await quoteLedgerModel.deleteOne({ _id: r_id })
         res.status(200).json({ message: 'Success' })
     } catch (err) {
-        console.log(err);
         res.status(500).json({ message: 'Internal Server Error' })
     }
 }
