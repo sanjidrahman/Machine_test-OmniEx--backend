@@ -6,7 +6,7 @@ const getAllSendRecord = async (req, res) => {
         const sendRecords = await sendRecordModel.find().populate('buyerId').populate('supplierId')
         res.status(200).json({ sendRecords })
     } catch (err) {
-        res.status(500).json({ message: 'Internal Server Error' })
+        res.status(500).json({ message: 'Internal Server Error'})
     }
 }
 
@@ -16,7 +16,6 @@ const addSendRecord = async (req, res) => {
         const buyerId = buyer._id
         const supplierId = supplier._id
         const serverDate = moment(date).format('YYYY-MM-DD')
-        console.log(`${date} ||| ${serverDate}`);
         const newRecord = new sendRecordModel({
             buyerId,
             supplierId,
@@ -27,7 +26,7 @@ const addSendRecord = async (req, res) => {
         await newRecord.save()
         res.status(201).json({ message: 'Created' })
     } catch (err) {
-        res.status(500).json({ message: 'Internal Server Error' })
+        res.status(500).json({ message: 'Internal Server Error'})
     }
 }
 

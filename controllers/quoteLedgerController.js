@@ -6,7 +6,7 @@ const getAllQuoteRecord = async (req, res) => {
        const receiveRecords = await quoteLedgerModel.find().populate('buyerId').populate('supplierId')
        res.status(200).json({ receiveRecords })
     } catch (err) {
-
+        res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 
