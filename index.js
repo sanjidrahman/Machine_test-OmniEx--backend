@@ -12,7 +12,7 @@ mongoose.connect('mongodb+srv://sanjid:mongosanjid@cluster0.ylbg7lk.mongodb.net/
     .catch((err) => console.log('Something went wrong', err))
 
 app.use(cors({
-    origin: ['http://localhost:4200']
+    origin: ['http://localhost:4200', 'https://omniex.vercel.app']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
