@@ -41,10 +41,8 @@ const deleteEntity = async (req, res) => {
 const calcSupplier = async (req, res) => {
     try {
 
-        // console.log(req.body);
         const inputDate = req.body.date;
         const serverDate = moment(inputDate).format('YYYY-MM-DD')
-        // console.log(inputDate, serverDate);
         const report = await quoteLedgerModel.aggregate([
             {
                 $match: {
@@ -89,25 +87,38 @@ const calcSupplier = async (req, res) => {
                 }
             },
             {
-                $group: {
-                    _id: '$supplierData._id',
-                    avg_rate: { $avg: '$rate' },
-                    supplierData: { $first: '$supplierData' },
-                    dueAmount: { $first: '$dueAmount' }
+                $lookup: {
+                    from: 'entities',
+                    localField: 'buyerId',
+                    foreignField: '_id',
+                    as: 'buyerData'
                 }
             },
-            // In the case if buyer name is needed
-            // {
-            //     $lookup: {
-            //         from: 'entities',
-            //         localField: 'buyerId',
-            //         foreignField: '_id',
-            //         as: 'buyerData'
-            //     }
-            // },
-            // {
-            //     $unwind: '$buyerData'
-            // },
+            {
+                $unwind: '$buyerData'
+            },
+            {
+                $group: {
+                    _id: '$supplierData._id',
+                    avgRate: { $avg: '$rate' },
+                    data: { $push: '$$ROOT' } // Preserve all fields in the original documents
+                }
+            },
+            {
+                $unwind: '$data'
+            },
+            {
+                $replaceRoot: { newRoot: { $mergeObjects: ['$data', { avgRate: '$avgRate' }] } } // Merge the avgRate field with the original document
+            },
+            {
+                $project: {
+                    _id: 0,
+                    avgRate: 1,
+                    'supplierData.name': 1,
+                    'buyerData.name': 1,
+                    dueAmount: 1
+                }
+            }
         ]);
         return res.status(200).json({ report })
     } catch (err) {
