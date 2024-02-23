@@ -15,11 +15,16 @@ const addQuoteRecord = async (req, res) => {
         const { buyer, supplier, quantity, amount, rate, date, time } = req.body
         const buyerId = buyer._id
         const supplierId = supplier._id
-        const serverDate = moment(date).format('YYYY-MM-DD')
+        // >>>>>>> Date conversion <<<<<<<<<
+        const inputDate = new Date(date)
+        inputDate.setDate(inputDate.getDate() + 1)
+        const serverDate = inputDate.toISOString()
+        const format = serverDate.split('T')[0]
+        // >>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<
         const newRecord = new quoteLedgerModel({
             buyerId,
             supplierId,
-            date: serverDate,
+            date: format,
             quantity,
             rate,
             time,
@@ -28,6 +33,7 @@ const addQuoteRecord = async (req, res) => {
         await newRecord.save()
         res.status(201).json({ message: 'Created' })
     } catch (err) {
+        console.log(err);
         res.status(500).json({ message: 'Internal Server Error' })
     }
 }

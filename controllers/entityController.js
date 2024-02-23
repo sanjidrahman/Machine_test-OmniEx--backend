@@ -1,7 +1,5 @@
 const entityModel = require("../models/entityModel");
 const quoteLedgerModel = require("../models/quoteLedgerModel");
-const sendRecordModel = require("../models/sendRecordModel");
-const moment = require('moment');
 
 const getAllEntity = async (req, res) => {
     try {
@@ -41,9 +39,6 @@ const deleteEntity = async (req, res) => {
 const calcSupplier = async (req, res) => {
     try {
 
-        // const inputDate = req.body.date;
-        // const serverDate = moment(inputDate).format('YYYY-MM-DD')
-        // console.log(new Date(serverDate));
         let format;
         const inputDate = req.body.date ? new Date(req.body.date) : new Date()
         if(!req.body.date) {
