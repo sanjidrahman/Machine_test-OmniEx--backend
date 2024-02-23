@@ -7,7 +7,7 @@ const adminRoute = require('./routes/adminRoute')
 const dotenv = require('dotenv');
 dotenv.config();
 
-mongoose.connect('mongodb://localhost:27017/OminiEx')
+mongoose.connect('mongodb+srv://sanjid:mongosanjid@cluster0.ylbg7lk.mongodb.net/OminiEx')
     .then(() => console.log('DB Connected'))
     .catch((err) => console.log('Something went wrong', err))
 
