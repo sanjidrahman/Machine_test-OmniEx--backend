@@ -41,12 +41,24 @@ const deleteEntity = async (req, res) => {
 const calcSupplier = async (req, res) => {
     try {
 
-        const inputDate = req.body.date;
-        const serverDate = moment(inputDate).format('YYYY-MM-DD')
+        // const inputDate = req.body.date;
+        // const serverDate = moment(inputDate).format('YYYY-MM-DD')
+        // console.log(new Date(serverDate));
+        let format;
+        const inputDate = req.body.date ? new Date(req.body.date) : new Date()
+        if(!req.body.date) {
+            const currDay = new Date().toISOString()
+            format = currDay.split('T')[0]
+        } else {
+            inputDate.setDate(inputDate.getDate() + 1)
+            const serverDate = inputDate.toISOString()
+            format = serverDate.split('T')[0]
+        }
+
         const report = await quoteLedgerModel.aggregate([
             {
                 $match: {
-                    date: new Date(serverDate)
+                    date: new Date(format)
                 }
             },
             {
@@ -78,7 +90,7 @@ const calcSupplier = async (req, res) => {
             },
             {
                 $match: {
-                    'sendRecordData.date': new Date(serverDate)
+                    'sendRecordData.date': new Date(format)
                 }
             },
             {
