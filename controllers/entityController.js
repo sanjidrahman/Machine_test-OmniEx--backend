@@ -41,13 +41,14 @@ const deleteEntity = async (req, res) => {
 const calcSupplier = async (req, res) => {
     try {
 
+        console.log(req.body);
         const inputDate = req.body.date;
-        const serverDate = moment(req.body.date).format('YYYY-MM-DD')
+        const serverDate = moment(inputDate).format('YYYY-MM-DD')
         console.log(inputDate, serverDate);
         const report = await quoteLedgerModel.aggregate([
             {
                 $match: {
-                    date: new Date(serverDate)
+                    date: serverDate
                 }
             },
             {
@@ -79,7 +80,7 @@ const calcSupplier = async (req, res) => {
             },
             {
                 $match: {
-                    'sendRecordData.date': new Date(serverDate)
+                    'sendRecordData.date': serverDate
                 }
             },
             {
@@ -110,6 +111,7 @@ const calcSupplier = async (req, res) => {
         ]);
         return res.status(200).json({ report })
     } catch (err) {
+        console.log(err);
         res.status(500).json({ message: 'Internal Server Error' })
     }
 }

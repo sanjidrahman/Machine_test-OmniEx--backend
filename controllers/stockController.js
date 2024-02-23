@@ -33,7 +33,6 @@ const addStockRecord = async (req, res) => {
 const deleteStock = async (req, res) => {
     try {
         const q_id = req.params.id
-        console.log(q_id, 'kkk');
         await stockModel.deleteOne({ _id: q_id })
         res.status(200).json({ message: 'Success' })
     } catch (err) {
