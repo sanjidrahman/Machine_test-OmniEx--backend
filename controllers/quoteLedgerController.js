@@ -12,7 +12,7 @@ const getAllQuoteRecord = async (req, res) => {
 
 const addQuoteRecord = async (req, res) => {
     try {
-        const { buyer, supplier, quantity, amount, rate, date, time } = req.body
+        const { buyer, supplier, quantity, rate, date, time } = req.body
         const buyerId = buyer._id
         const supplierId = supplier._id
         // >>>>>>> Date conversion <<<<<<<<<
@@ -28,7 +28,7 @@ const addQuoteRecord = async (req, res) => {
             quantity,
             rate,
             time,
-            amount
+            amount: quantity * rate
         })
         await newRecord.save()
         res.status(201).json({ message: 'Created' })

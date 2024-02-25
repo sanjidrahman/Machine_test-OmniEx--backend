@@ -41,7 +41,7 @@ const calcSupplier = async (req, res) => {
 
         let format;
         const inputDate = req.body.date ? new Date(req.body.date) : new Date()
-        if(!req.body.date) {
+        if (!req.body.date) {
             const currDay = new Date().toISOString()
             format = currDay.split('T')[0]
         } else {
@@ -73,9 +73,19 @@ const calcSupplier = async (req, res) => {
                 }
             },
             {
+                $group: {
+                    _id: {
+                        supplierId: '$supplierId',
+                        buyerId: '$buyerId'
+                    },
+                    totalQuoteAmount: { $sum: '$amount' },
+                    avgRate: { $avg: '$rate' }
+                }
+            },
+            {
                 $lookup: {
                     from: 'sendrecords',
-                    localField: 'supplierId',
+                    localField: '_id.supplierId',
                     foreignField: 'supplierId',
                     as: 'sendRecordData'
                 }
@@ -89,14 +99,35 @@ const calcSupplier = async (req, res) => {
                 }
             },
             {
+                $group: {
+                    _id: {
+                        supplierId: '$sendRecordData.supplierId',
+                        buyerId: '$sendRecordData.buyerId'
+                    },
+                    totalsendRecordAmount: { $sum: '$sendRecordData.amount' },
+                    previousGroupData: { $mergeObjects: '$$ROOT' }
+                }
+            },
+            {
                 $addFields: {
-                    dueAmount: { $subtract: ["$sendRecordData.amount", "$amount"] }
+                    totalDueAmount: { $subtract: ["$totalsendRecordAmount", "$previousGroupData.totalQuoteAmount"] }
                 }
             },
             {
                 $lookup: {
                     from: 'entities',
-                    localField: 'buyerId',
+                    localField: '_id.supplierId',
+                    foreignField: '_id',
+                    as: 'supplierData'
+                }
+            },
+            {
+                $unwind: '$supplierData'
+            },
+            {
+                $lookup: {
+                    from: 'entities',
+                    localField: '_id.buyerId',
                     foreignField: '_id',
                     as: 'buyerData'
                 }
@@ -105,25 +136,12 @@ const calcSupplier = async (req, res) => {
                 $unwind: '$buyerData'
             },
             {
-                $group: {
-                    _id: '$supplierData._id',
-                    avgRate: { $avg: '$rate' },
-                    data: { $push: '$$ROOT' } // Preserve all fields in the original documents
-                }
-            },
-            {
-                $unwind: '$data'
-            },
-            {
-                $replaceRoot: { newRoot: { $mergeObjects: ['$data', { avgRate: '$avgRate' }] } } // Merge the avgRate field with the original document
-            },
-            {
                 $project: {
                     _id: 0,
-                    avgRate: 1,
-                    'supplierData.name': 1,
-                    'buyerData.name': 1,
-                    dueAmount: 1
+                    'previousGroupData.avgRate': 1,
+                    totalDueAmount: 1,
+                    supplierData: 1,
+                    buyerData: 1
                 }
             }
         ]);
